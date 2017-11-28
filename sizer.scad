@@ -1,10 +1,11 @@
-$fn = 90;
+$fn = 200;
+
 
 difference(){
     cube([20,20,32]);
     translate([10,10,-2]){
         // cube([16,16,45]);
-        cylinder(50,8,8);
+        cylinder(50,7,7);
     }
     translate([2,-1,10]){
         cube([25,35,2]);
@@ -13,7 +14,7 @@ difference(){
         cube([25,35,2]);
     }
     translate([-1,2,13]){
-        cube([10,15,8]);
+        cube([5,15,8]);
     }
 }
 
@@ -30,10 +31,18 @@ difference(){
         cylinder(12,10,10);
     }
     translate([10,10,30]){
-        cylinder(20,8,8);
+        cylinder(20,7,7);
     }
 }
 
+difference(){
+    translate([10,10,-11]){
+        cylinder(12,10,10);
+    }
+    translate([10,10,-12]){
+        cylinder(20,7,7);
+    }
+}
 
 difference(){
     translate([-6,0,5]){
@@ -42,4 +51,12 @@ difference(){
     translate([-4,-1,7]){
         cube([4,22,21]);
     }
+}
+
+translate([-4,0,7]){
+    cube([4,3,1]);
+}
+
+translate([-4,17,7]){
+    cube([4,3,1]);
 }
