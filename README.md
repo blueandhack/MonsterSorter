@@ -1,1 +1,5 @@
-# SuperSorter
+# MonsterSorter
+
+Yujia Lin
+Zelin Wan 
+
