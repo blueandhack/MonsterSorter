@@ -73,24 +73,24 @@ int selectServo = 4;
  */
 void initializeTrainingColors() {
   // Skittle: red
-  trainingColors[CHANNEL_R][COL_RED] = 0.577;
-  trainingColors[CHANNEL_G][COL_RED] = 0.609;
-  trainingColors[CHANNEL_B][COL_RED] = 0.561;
+  trainingColors[CHANNEL_R][COL_RED] = 0.640;
+  trainingColors[CHANNEL_G][COL_RED] = 0.580;
+  trainingColors[CHANNEL_B][COL_RED] = 0.513;
 
   // Skittle: green
-  trainingColors[CHANNEL_R][COL_GREEN] = 0.445;
-  trainingColors[CHANNEL_G][COL_GREEN] = 0.735;
-  trainingColors[CHANNEL_B][COL_GREEN] = 0.512;
+  trainingColors[CHANNEL_R][COL_GREEN] = 0.452;
+  trainingColors[CHANNEL_G][COL_GREEN] = 0.754;
+  trainingColors[CHANNEL_B][COL_GREEN] = 0.477;
 
   // Skittle: orange
-  trainingColors[CHANNEL_R][COL_ORANGE] = 0.681;
-  trainingColors[CHANNEL_G][COL_ORANGE] = 0.570;
-  trainingColors[CHANNEL_B][COL_ORANGE] = 0.460;
+  trainingColors[CHANNEL_R][COL_ORANGE] = 0.781;
+  trainingColors[CHANNEL_G][COL_ORANGE] = 0.519;
+  trainingColors[CHANNEL_B][COL_ORANGE] = 0.374;
 
   // Skittle: yellow
-  trainingColors[CHANNEL_R][COL_YELLOW] = 0.611;
-  trainingColors[CHANNEL_G][COL_YELLOW] = 0.669;
-  trainingColors[CHANNEL_B][COL_YELLOW] = 0.422;
+  trainingColors[CHANNEL_R][COL_YELLOW] = 0.689;
+  trainingColors[CHANNEL_G][COL_YELLOW] = 0.646;
+  trainingColors[CHANNEL_B][COL_YELLOW] = 0.328;
 
   // Skittle: purple
   trainingColors[CHANNEL_R][COL_PURPLE] = 0.484;
@@ -98,9 +98,9 @@ void initializeTrainingColors() {
   trainingColors[CHANNEL_B][COL_PURPLE] = 0.591;
 
   // Nothing
-  trainingColors[CHANNEL_R][COL_NOTHING] = 0.448;
-  trainingColors[CHANNEL_G][COL_NOTHING] = 0.665;
-  trainingColors[CHANNEL_B][COL_NOTHING] = 0.605;
+  trainingColors[CHANNEL_R][COL_NOTHING] = 0.437;
+  trainingColors[CHANNEL_G][COL_NOTHING] = 0.675;
+  trainingColors[CHANNEL_B][COL_NOTHING] = 0.595;
 }
 
 /*void initializeTrainingColors() {     // function backup
@@ -148,7 +148,7 @@ void getNormalizedColor() {
   bNorm = (float)b/lenVec;
 
   // Also convert to HSB:
-  //RGBtoHSV(rNorm, gNorm, bNorm, &hue, &saturation, &brightness);
+  RGBtoHSV(rNorm, gNorm, bNorm, &hue, &saturation, &brightness);
 }
 
 
@@ -266,33 +266,59 @@ void setup(void) {
 }
 
 void loop(void) {
-  servo1.write(81);
+  servo1.write(120);
   servo2.write(155);
-  delay(300);
+  delay(100);
   servo2.write(125);
   
-  delay(100);
+  delay(200);
   // Step 1: Get normalized colour vector
   getNormalizedColor();
   int colClass = getColorClass();   
+  
+  servo1.write(130);
+  getNormalizedColor();
+  int colClass2 = getColorClass();   
+
+  if(colClass != colClass2){
+    Serial.println("NOT SAME");
+    Serial.println();
+    Serial.println();
+    Serial.println();
+    Serial.println();
+    Serial.println("NOT SAME");
+  }
+  
   switch (colClass) {
-    case COL_RED:
-      servo3.write(108);
+    case COL_RED:   // 0 - 60
+      if(saturation > 0.38){
+        servo3.write(45); // go orange
+      }
+      else{
+        servo3.write(160);
+      }
+      delay(100);
       break;
     case COL_GREEN:
-      servo3.write(137);
+      servo3.write(132);
       break;
-    case COL_ORANGE:
-      servo3.write(55);
+    case COL_ORANGE:  // 0.35 up
+      if(saturation < 0.38){
+        servo3.write(160); // go red
+      }
+      else{
+        servo3.write(45);
+      }
+      delay(100);
       break;
     case COL_YELLOW:
-      servo3.write(85);
+      servo3.write(70);
       break;
     case COL_PURPLE:
-      servo3.write(155);
+      servo3.write(102);
       break;
     case COL_NOTHING:
-      servo3.write(155);
+      servo3.write(102);
       break;
     default:
       Serial.print("ERROR");
@@ -304,8 +330,8 @@ void loop(void) {
   Serial.print("R: "); Serial.print(rNorm, 3); Serial.print("  ");
   Serial.print("G: "); Serial.print(gNorm, 3); Serial.print("  ");
   Serial.print("B: "); Serial.print(bNorm, 3); Serial.print("  ");  
-  //Serial.print("H: "); Serial.print(hue, 3); Serial.print("  ");
-  //Serial.print("S: "); Serial.print(saturation, 3); Serial.print("  ");
+  Serial.print("H: "); Serial.print(hue, 3); Serial.print("  ");
+  Serial.print("S: "); Serial.print(saturation, 3); Serial.print("  ");
   //Serial.print("B: "); Serial.print(brightness, 3); Serial.print("  ");
   
   printColourName(colClass);  
@@ -313,10 +339,10 @@ void loop(void) {
   
   Serial.print(" (cos: "); Serial.print(lastCosine); Serial.print(") ");
   Serial.println("");
-  servo1.write(110);
+  servo1.write(150);
   
-  //servo3.write(100);
+  //servo1.write(130);
   
-  delay(200);
+  delay(100);
 
 }
