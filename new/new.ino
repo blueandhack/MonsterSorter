@@ -153,7 +153,7 @@ void getNormalizedColor() {
   bNorm = (float)b/lenVec;
 
   // Also convert to HSB:
-  RGBtoHSV(rNorm, gNorm, bNorm, &hue, &saturation, &brightness);
+  //RGBtoHSV(rNorm, gNorm, bNorm, &hue, &saturation, &brightness);
 }
 
 
@@ -265,20 +265,25 @@ void setup(void) {
   servo1.attach(buttonServo);
   servo2.attach(topServo);
   servo3.attach(selectServo);
-  servo4.attach(vibeServo);
+  //servo4.attach(vibeServo);
   
   
   // Now we're ready to get readings!
 }
 
+int preLocation = 0;
+int location = 0; //orange is 1, yellow is 2, purple is 3, green is 4, red is 5
+int smartdelay = 0;
+
 void loop(void) {
   servo1.write(120);
+  delay(50);
   servo2.write(135);
   delay(100);
   servo2.write(100);
 
 //vibeServo
-  value++;
+  /*value++;
   if(value == 2){
     servo4.write(0);
   }
@@ -287,12 +292,16 @@ void loop(void) {
   }
   if(value == 3){
     value = 1;
-  }
+  }*/
   
   delay(100);
   // Step 1: Get normalized colour vector
   getNormalizedColor();
-  servo1.write(150);
+  servo1.write(150);    // open bottonServo
+  
+  // Also convert to HSB:
+  RGBtoHSV(rNorm, gNorm, bNorm, &hue, &saturation, &brightness);    // this function was in getNormalizedColor()
+  
   int colClass = getColorClass();   
   
   /*servo1.write(130);
@@ -312,63 +321,81 @@ void loop(void) {
     case COL_RED:   // 0 - 60
       if(saturation > 0.39){
         servo3.write(25); // go orange
-        delay(180);
+        location = 1;
+        //delay(180);
         break;
       }
       if(hue > 80){
         servo3.write(85); // go purple
+        location = 3;
         break;
       }
       servo3.write(155);
-      delay(180);
+      location = 5;
+      //delay(180);
       break;
     case COL_GREEN:
       servo3.write(120);
-      delay(80);
+      location = 4;
+      //delay(80);
       break;
     case COL_ORANGE:  // 0.35 up
       if(saturation < 0.39){
         servo3.write(155); // go red
-        delay(180);
+        //delay(180);
+        location = 5;
         break;
       }
       if(hue > 22){
         servo3.write(25); // go yellow
-        delay(80);
+        //delay(80);
+        location = 2;
         break;
       }
       servo3.write(25);
-      delay(180);
+      //delay(180);
+      location = 1;
       break;
     case COL_YELLOW:
       if(hue < 22){
         servo3.write(25); // go orange
-        delay(180);
+        //delay(180);
+        location = 1;
         break;
       }
       servo3.write(50);
-      delay(80);
+      location = 2;
+      //delay(80);
       break;
     case COL_PURPLE:
       if(hue < 80){
         servo3.write(155);  // go red
-        delay(180);
+        location = 5;
+        //delay(180);
         break;
       }
+      location = 3;
       servo3.write(85);
       break;
     case COL_NOTHING:
       if(hue < 80){
         servo3.write(155);  // go red
-        delay(180);
+        location = 5;
+        //delay(180);
         break;
       }
       servo3.write(85);
+      location = 3;
       break;
     default:
       Serial.print("ERROR");
       break;
   }
+  
+  //smartdelay
+  smartdelay = abs(preLocation - location)*60+60;
+  delay(smartdelay);
+  preLocation = location;
   //delay(100);
 
 
@@ -389,6 +416,6 @@ void loop(void) {
   
   //servo3.write(155);
   
-  delay(100);
+  //delay(50);
 
 }
