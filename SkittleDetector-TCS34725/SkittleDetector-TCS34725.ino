@@ -64,43 +64,48 @@ float lastCosine = 0;
 Servo servo1;
 Servo servo2;
 Servo servo3;
+Servo servo4;
 int buttonServo = 11;
 int topServo = 9;
 int selectServo = 4;
+int vibeServo = 3;
+
+int value = 0;
+int add = 5;
 
 /*
  * Colour sensing
  */
 void initializeTrainingColors() {
   // Skittle: red
-  trainingColors[CHANNEL_R][COL_RED] = 0.577;
-  trainingColors[CHANNEL_G][COL_RED] = 0.609;
-  trainingColors[CHANNEL_B][COL_RED] = 0.561;
+  trainingColors[CHANNEL_R][COL_RED] = 0.640;
+  trainingColors[CHANNEL_G][COL_RED] = 0.580;
+  trainingColors[CHANNEL_B][COL_RED] = 0.513;
 
   // Skittle: green
-  trainingColors[CHANNEL_R][COL_GREEN] = 0.445;
-  trainingColors[CHANNEL_G][COL_GREEN] = 0.735;
-  trainingColors[CHANNEL_B][COL_GREEN] = 0.512;
+  trainingColors[CHANNEL_R][COL_GREEN] = 0.452;
+  trainingColors[CHANNEL_G][COL_GREEN] = 0.754;
+  trainingColors[CHANNEL_B][COL_GREEN] = 0.477;
 
   // Skittle: orange
-  trainingColors[CHANNEL_R][COL_ORANGE] = 0.681;
-  trainingColors[CHANNEL_G][COL_ORANGE] = 0.570;
-  trainingColors[CHANNEL_B][COL_ORANGE] = 0.460;
+  trainingColors[CHANNEL_R][COL_ORANGE] = 0.781;
+  trainingColors[CHANNEL_G][COL_ORANGE] = 0.519;
+  trainingColors[CHANNEL_B][COL_ORANGE] = 0.374;
 
   // Skittle: yellow
-  trainingColors[CHANNEL_R][COL_YELLOW] = 0.611;
-  trainingColors[CHANNEL_G][COL_YELLOW] = 0.669;
-  trainingColors[CHANNEL_B][COL_YELLOW] = 0.422;
+  trainingColors[CHANNEL_R][COL_YELLOW] = 0.689;
+  trainingColors[CHANNEL_G][COL_YELLOW] = 0.646;
+  trainingColors[CHANNEL_B][COL_YELLOW] = 0.328;
 
   // Skittle: purple
-  trainingColors[CHANNEL_R][COL_PURPLE] = 0.484;
-  trainingColors[CHANNEL_G][COL_PURPLE] = 0.645;
-  trainingColors[CHANNEL_B][COL_PURPLE] = 0.591;
+  trainingColors[CHANNEL_R][COL_PURPLE] = 0.497;
+  trainingColors[CHANNEL_G][COL_PURPLE] = 0.650;
+  trainingColors[CHANNEL_B][COL_PURPLE] = 0.574;
 
   // Nothing
-  trainingColors[CHANNEL_R][COL_NOTHING] = 0.448;
-  trainingColors[CHANNEL_G][COL_NOTHING] = 0.665;
-  trainingColors[CHANNEL_B][COL_NOTHING] = 0.605;
+  trainingColors[CHANNEL_R][COL_NOTHING] = 0.437;
+  trainingColors[CHANNEL_G][COL_NOTHING] = 0.675;
+  trainingColors[CHANNEL_B][COL_NOTHING] = 0.595;
 }
 
 /*void initializeTrainingColors() {     // function backup
@@ -148,7 +153,7 @@ void getNormalizedColor() {
   bNorm = (float)b/lenVec;
 
   // Also convert to HSB:
-  //RGBtoHSV(rNorm, gNorm, bNorm, &hue, &saturation, &brightness);
+  RGBtoHSV(rNorm, gNorm, bNorm, &hue, &saturation, &brightness);
 }
 
 
@@ -260,52 +265,119 @@ void setup(void) {
   servo1.attach(buttonServo);
   servo2.attach(topServo);
   servo3.attach(selectServo);
+  servo4.attach(vibeServo);
   
   
   // Now we're ready to get readings!
 }
 
 void loop(void) {
-  servo1.write(81);
-  servo2.write(155);
-  delay(300);
-  servo2.write(125);
+  servo1.write(120);
+  servo2.write(135);
+  delay(100);
+  servo2.write(100);
+
+//vibeServo
+  value++;
+  if(value == 2){
+    servo4.write(0);
+  }
+  if(value == 3){  
+    servo4.write(180);
+  }
+  if(value == 3){
+    value = 1;
+  }
   
   delay(100);
   // Step 1: Get normalized colour vector
   getNormalizedColor();
+  servo1.write(150);
   int colClass = getColorClass();   
+  
+  /*servo1.write(130);
+  getNormalizedColor();
+  int colClass2 = getColorClass();   
+
+  if(colClass != colClass2){
+    Serial.println("NOT SAME");
+    Serial.println();
+    Serial.println();
+    Serial.println();
+    Serial.println();
+    Serial.println("NOT SAME");
+  }*/
+  
   switch (colClass) {
-    case COL_RED:
-      servo3.write(108);
+    case COL_RED:   // 0 - 60
+      if(saturation > 0.39){
+        servo3.write(25); // go orange
+        delay(180);
+        break;
+      }
+      if(hue > 80){
+        servo3.write(85); // go purple
+        break;
+      }
+      servo3.write(155);
+      delay(180);
       break;
     case COL_GREEN:
-      servo3.write(137);
+      servo3.write(120);
+      delay(80);
       break;
-    case COL_ORANGE:
-      servo3.write(55);
+    case COL_ORANGE:  // 0.35 up
+      if(saturation < 0.39){
+        servo3.write(155); // go red
+        delay(180);
+        break;
+      }
+      if(hue > 22){
+        servo3.write(25); // go yellow
+        delay(80);
+        break;
+      }
+      servo3.write(25);
+      delay(180);
       break;
     case COL_YELLOW:
-      servo3.write(85);
+      if(hue < 22){
+        servo3.write(25); // go orange
+        delay(180);
+        break;
+      }
+      servo3.write(50);
+      delay(80);
       break;
     case COL_PURPLE:
-      servo3.write(155);
+      if(hue < 80){
+        servo3.write(155);  // go red
+        delay(180);
+        break;
+      }
+      servo3.write(85);
       break;
     case COL_NOTHING:
-      servo3.write(155);
+      if(hue < 80){
+        servo3.write(155);  // go red
+        delay(180);
+        break;
+      }
+      servo3.write(85);
       break;
     default:
       Serial.print("ERROR");
       break;
   }
+  //delay(100);
 
 
   // Step 2: Output colour
   Serial.print("R: "); Serial.print(rNorm, 3); Serial.print("  ");
   Serial.print("G: "); Serial.print(gNorm, 3); Serial.print("  ");
   Serial.print("B: "); Serial.print(bNorm, 3); Serial.print("  ");  
-  //Serial.print("H: "); Serial.print(hue, 3); Serial.print("  ");
-  //Serial.print("S: "); Serial.print(saturation, 3); Serial.print("  ");
+  Serial.print("H: "); Serial.print(hue, 3); Serial.print("  ");
+  Serial.print("S: "); Serial.print(saturation, 3); Serial.print("  ");
   //Serial.print("B: "); Serial.print(brightness, 3); Serial.print("  ");
   
   printColourName(colClass);  
@@ -313,10 +385,10 @@ void loop(void) {
   
   Serial.print(" (cos: "); Serial.print(lastCosine); Serial.print(") ");
   Serial.println("");
-  servo1.write(110);
+  //servo1.write(150);
   
-  //servo3.write(100);
+  //servo3.write(155);
   
-  delay(200);
+  delay(100);
 
 }
