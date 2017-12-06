@@ -2,12 +2,12 @@ $fn = 200;
 
 // blender
 difference(){
-    translate([0,0,25]){
-        cube([48,2,72]);
+    translate([0,0,10]){
+        cube([48,2,87]);
     }
-    translate([8,-1,25]){
+    translate([1,-1,10]){
         rotate([0,25,0]){
-            cube([40,4,150]);
+            cube([50,4,150]);
         }
     }
 }

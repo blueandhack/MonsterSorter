@@ -10,7 +10,7 @@ translate([0,0,12]){
 }
 
 difference(){
-    cylinder(17,11,11);
+    cylinder(18,12.5,12.5);
     translate([0,0,-1]){
         cylinder(28,10,10);
     }
