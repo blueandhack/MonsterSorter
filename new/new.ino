@@ -79,7 +79,7 @@ int add = 5;
 void initializeTrainingColors() {
   // Skittle: red
   trainingColors[CHANNEL_R][COL_RED] = 0.640;
-  trainingColors[CHANNEL_G][COL_RED] = 0.580;
+  trainingColors[CHANNEL_G][COL_RED] = 0.560;
   trainingColors[CHANNEL_B][COL_RED] = 0.513;
 
   // Skittle: green
@@ -94,7 +94,7 @@ void initializeTrainingColors() {
 
   // Skittle: yellow
   trainingColors[CHANNEL_R][COL_YELLOW] = 0.689;
-  trainingColors[CHANNEL_G][COL_YELLOW] = 0.646;
+  trainingColors[CHANNEL_G][COL_YELLOW] = 0.660;
   trainingColors[CHANNEL_B][COL_YELLOW] = 0.328;
 
   // Skittle: purple
@@ -298,6 +298,7 @@ void loop(void) {
   // Step 1: Get normalized colour vector
   getNormalizedColor();
   servo1.write(150);    // open bottonServo
+  delay(10);
   
   // Also convert to HSB:
   RGBtoHSV(rNorm, gNorm, bNorm, &hue, &saturation, &brightness);    // this function was in getNormalizedColor()
@@ -335,19 +336,19 @@ void loop(void) {
       //delay(180);
       break;
     case COL_GREEN:
-      servo3.write(120);
+      servo3.write(125);
       location = 4;
       //delay(80);
       break;
     case COL_ORANGE:  // 0.35 up
-      if(saturation < 0.39){
+      if(saturation < 0.41){
         servo3.write(155); // go red
         //delay(180);
         location = 5;
         break;
       }
-      if(hue > 22){
-        servo3.write(25); // go yellow
+      if(hue > 33){
+        servo3.write(53); // go yellow
         //delay(80);
         location = 2;
         break;
@@ -357,13 +358,13 @@ void loop(void) {
       location = 1;
       break;
     case COL_YELLOW:
-      if(hue < 22){
+      if(hue < 33){
         servo3.write(25); // go orange
         //delay(180);
         location = 1;
         break;
       }
-      servo3.write(50);
+      servo3.write(53);
       location = 2;
       //delay(80);
       break;
@@ -375,7 +376,7 @@ void loop(void) {
         break;
       }
       location = 3;
-      servo3.write(85);
+      servo3.write(90);
       break;
     case COL_NOTHING:
       if(hue < 80){
@@ -384,7 +385,7 @@ void loop(void) {
         //delay(180);
         break;
       }
-      servo3.write(85);
+      servo3.write(90);
       location = 3;
       break;
     default:
@@ -393,10 +394,12 @@ void loop(void) {
   }
   
   //smartdelay
-  smartdelay = abs(preLocation - location)*60+60;
+  smartdelay = abs(preLocation - location)*40+90;
   delay(smartdelay);
   preLocation = location;
   //delay(100);
+  Serial.print("SmartDelay: ");
+  Serial.println(smartdelay);
 
 
   // Step 2: Output colour
@@ -414,7 +417,7 @@ void loop(void) {
   Serial.println("");
   //servo1.write(150);
   
-  //servo3.write(155);
+  //servo3.write(53);
   
   //delay(50);
 
