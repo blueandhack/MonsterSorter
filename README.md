@@ -1,5 +1,8 @@
 # MonsterSorter
 
-Yujia Lin
-Zelin Wan 
+The fast Skittle sorter in the world.
+
+
+
+Made by Yujia Lin, Zelin Wan.
 
